@@ -1,5 +1,28 @@
 
 
+##Proje Açıklaması: Flutter Kanban Uygulaması
+
+1. Proje Tanımı:
+   Flutter kullanarak geliştirdiğim kanban uygulaması, ana sayfada bulunan dört farklı liste ile kullanıcılara görevleri organize etme imkanı sunar. Her bir liste üzerinden "Ekle" butonuna tıklayarak kartlar ekleyebilir, bu kartları sürükleyip bırakarak istenilen sıraya yerleştirebilirsiniz.
+
+2. Kart İşlemleri:
+   - Kart içeriğini güncelleme: Her bir kartın içeriğini düzenleyebilir, güncel bilgileri ekleyebilirsiniz.
+   - Kartları sürükleyip bırakma: Listeler arasında kartları taşıyabilir, öncelik belirleyebilirsiniz.
+   - Kartları silme: İstediğiniz kartları tek tek veya toplu olarak silebilirsiniz.
+
+3. Arama ve Detay Sayfası:
+   - Arama özelliği: Arama butonu ile istediğiniz kartları hızlıca bulabilirsiniz.
+   - Kart detayları: Kartın detay sayfasına giderek, kartı liste içine eklemenin yanı sıra yeni kartlar ekleyebilirsiniz.
+
+4. Veritabanı ve Depolama:
+   - SQLite kullanımı: Verileri yerel olarak SQLite veritabanında depoluyorum, bu sayede kullanıcıların verileri güvenli bir şekilde saklanır.
+   - Ayarlar ve Veri Nijaya Git: Ayarlar ve "Word Nijaya Git" butonları ile kullanıcılar sayfasına yönlendirme yapılmakta. Bu sayfada API kullanarak kullanıcı bilgilerini çekip listeliyor ve detay sayfalarını görüntüleme imkanı sunuyor.
+
+5. Bloc Yapısı:
+   - Bloc kullanımı: Kullanıcılar sayfasında Bloc yapısını kullanarak, veri yönetimi ve durum yönetimini etkili bir şekilde sağlıyorum. Bu sayede uygulama daha düzenli ve performanslı çalışmaktadır.
+
+
+
 
 Proje Dökümantasyonu
 	

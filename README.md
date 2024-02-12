@@ -1,6 +1,4 @@
-
-
-##Proje Açıklaması: Flutter Kanban Uygulaması
+Proje Açıklaması: Flutter Kanban Uygulaması
 
 1. Proje Tanımı:
    Flutter kullanarak geliştirdiğim kanban uygulaması, ana sayfada bulunan dört farklı liste ile kullanıcılara görevleri organize etme imkanı sunar. Her bir liste üzerinden "Ekle" butonuna tıklayarak kartlar ekleyebilir, bu kartları sürükleyip bırakarak istenilen sıraya yerleştirebilirsiniz.
@@ -20,6 +18,8 @@
 
 5. Bloc Yapısı:
    - Bloc kullanımı: Kullanıcılar sayfasında Bloc yapısını kullanarak, veri yönetimi ve durum yönetimini etkili bir şekilde sağlıyorum. Bu sayede uygulama daha düzenli ve performanslı çalışmaktadır.
+
+
 
 
 

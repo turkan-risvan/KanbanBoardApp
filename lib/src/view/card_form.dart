@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 
-
 class TodoCard extends StatelessWidget {
   final Function onClose;
 
@@ -70,11 +69,11 @@ class TodoCard extends StatelessWidget {
                   filled: true,
                   hintText: "title",
                   hintStyle: const TextStyle(color: Color(0xffB1B1B1), fontSize: 11),
-                  fillColor: Colors.grey[200], // Arkaplan rengi
-                  contentPadding: const EdgeInsets.all(10), // İç içe boşluk
+                  fillColor: Colors.grey[200], 
+                  contentPadding: const EdgeInsets.all(10), 
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10), // Köşe yuvarlatma
+                    borderRadius: BorderRadius.circular(10), 
                   ),
                 ),
               ),
@@ -89,11 +88,11 @@ class TodoCard extends StatelessWidget {
                   filled: true,
                   hintText: "title",
                   hintStyle: const TextStyle(color: Color(0xffB1B1B1), fontSize: 11),
-                  fillColor: Colors.grey[200], // Arkaplan rengi
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 45), // İç içe boşluk
+                  fillColor: Colors.grey[200], 
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 45), 
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10), // Köşe yuvarlatma
+                    borderRadius: BorderRadius.circular(10), 
                   ),
                 ),
               ),
@@ -108,11 +107,11 @@ class TodoCard extends StatelessWidget {
                   filled: true,
                   hintText: "title",
                   hintStyle: const TextStyle(color: Color(0xffB1B1B1), fontSize: 11),
-                  fillColor: Colors.grey[200], // Arkaplan rengi
-                  contentPadding: const EdgeInsets.all(10), // İç içe boşluk
+                  fillColor: Colors.grey[200], 
+                  contentPadding: const EdgeInsets.all(10), 
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10), // Köşe yuvarlatma
+                    borderRadius: BorderRadius.circular(10), 
                   ),
                 ),
               ),
@@ -127,16 +126,15 @@ class TodoCard extends StatelessWidget {
                   filled: true,
                   hintText: "title",
                   hintStyle: const TextStyle(color: Color(0xffB1B1B1), fontSize: 11),
-                  fillColor: Colors.grey[200], // Arkaplan rengi
-                  contentPadding: const EdgeInsets.all(10), // İç içe boşluk
+                  fillColor: Colors.grey[200], 
+                  contentPadding: const EdgeInsets.all(10), 
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10), // Köşe yuvarlatma
+                    borderRadius: BorderRadius.circular(10), 
                   ),
                 ),
               ),
               const SizedBox(height: 10.0),
-             
             ],
           ),
         ),
@@ -144,5 +142,3 @@ class TodoCard extends StatelessWidget {
     );
   }
 }
-
- 

@@ -1,3 +1,4 @@
+ 
 import 'package:flutter/material.dart';
 import 'package:kanbanboardapp/src/view/alertdialog_page.dart';
 import 'package:kanbanboardapp/src/view/card_form.dart';
@@ -16,6 +17,7 @@ class _CardDetayState extends State<CardDetay> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
+      // Card'ın ekleneceği durumda kullanılacak olan FAB (Floating Action Button)
       floatingActionButton: isTodoCardVisible
           ? TodoCard(
               onClose: () {
@@ -37,17 +39,16 @@ class _CardDetayState extends State<CardDetay> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProjectCard("Refactoring for Word Ninja", "New project for refactoring our app Word ninja"),
-                const Text(
-                  " Flutter Application",
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
-                ),
+                // Projeye ait kartları oluşturan metod
+                buildProjectCard("Refactoring for Word Ninja", "New project for refactoring our app Word ninja"),
+               
                 const SizedBox(height: 2),
                 const Text(
-                  "Flutter Application",
+                  "Flutter Proje",
                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 15),
+                // İlgili kişinin bilgilerini gösteren kısım
                 Row(
                   children: [
                     const CircleAvatar(
@@ -62,7 +63,7 @@ class _CardDetayState extends State<CardDetay> {
                       text: const TextSpan(
                         children: <TextSpan>[
                           TextSpan(
-                            text: 'Reported by  ',
+                            text: 'Reported by ',
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -85,22 +86,24 @@ class _CardDetayState extends State<CardDetay> {
                 const SizedBox(
                   height: 30,
                 ),
+                // Görevin başlık ve tarih kısmı
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(const Color(0xff744BFC)),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            pencereAc(context ,mevcutAciklama: "", mevcutIsim: "", mevcutKategori: 0, );
-                          });
-                        },
-                        child: const Text(
-                          "To Do",
-                          style: TextStyle(color: Colors.white, fontSize: 11),
-                        )),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(const Color(0xff744BFC)),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          pencereAc(context, mevcutAciklama: "", mevcutIsim: "", mevcutKategori: 0);
+                        });
+                      },
+                      child: const Text(
+                        "To Do",
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
                     const Text(
                       "06.08.2023",
                       style: TextStyle(color: Colors.grey, fontSize: 11),
@@ -117,6 +120,7 @@ class _CardDetayState extends State<CardDetay> {
                 const SizedBox(
                   height: 10,
                 ),
+                // Görevin açıklama kısmı
                 Container(
                   height: 150,
                   width: double.infinity,
@@ -125,7 +129,7 @@ class _CardDetayState extends State<CardDetay> {
                     padding: EdgeInsets.all(8.0),
                     child: Center(
                       child: Text(
-                        "Description",
+                        "Flutter projesi için sayfalar oluturuldu. Gerekli eklemeler yapldi.",
                         style: TextStyle(fontSize: 11),
                       ),
                     ),
@@ -134,6 +138,7 @@ class _CardDetayState extends State<CardDetay> {
                 const SizedBox(
                   height: 30,
                 ),
+                // Görevi tamamlayan kişinin avatarı
                 const CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 15,
@@ -141,9 +146,10 @@ class _CardDetayState extends State<CardDetay> {
                 ),
               ],
             ),
+            // Özel avatarın konumu
             const Positioned(
               left: 22,
-              bottom: 119,
+              bottom: 127,
               child: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 15,
@@ -156,7 +162,8 @@ class _CardDetayState extends State<CardDetay> {
     );
   }
 
-  Widget _buildProjectCard(String title, String description) {
+  // Projeye ait kartları oluşturan metod
+  Widget buildProjectCard(String title, String description) {
     return Column(
       children: [
         Row(

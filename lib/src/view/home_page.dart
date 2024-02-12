@@ -3,12 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanbanboardapp/src/model/kanban_model.dart';
 import 'package:kanbanboardapp/src/repo/repositories.dart';
 import 'package:kanbanboardapp/src/view/alertdialog_page.dart';
- 
+
 import 'package:kanbanboardapp/src/view/card_detay.dart';
 import 'package:kanbanboardapp/src/view/search.dart';
 import 'package:kanbanboardapp/src/view/user_page.dart';
-import 'package:kanbanboardapp/src/yerel_veri_tabani.dart';
- 
+import 'package:kanbanboardapp/src/database/sqlite_database.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,16 +15,21 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+    // Yerel veritabanı örneği
   YerelVeriTabani yerelVeriTabani = YerelVeriTabani();
 
+  // Kaydırma işlemlerini yönetmek için kullanılan kontrol
   ScrollController scrollController = ScrollController();
 
+// Kanban nesnelerini tutan liste
   static List<Kanban> kanbanlar = [];
- 
 
+// kartının görünürlüğünü belirleyen kısım
   bool isTodoCardVisible = false;
+  // Seçilen kategori indeksi
   int secilenKategori = -1;
 
+ // Seçilen Kanban ID'lerini saklamak için liste
   List<int> secilenKanbanIdleri = [];
 
   @override
@@ -36,63 +40,69 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    //  backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      bottomNavigationBar: Container(
-        width: double.infinity,
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 5,
-              blurRadius: 10,
-              offset: const Offset(0, -1), // Y ekseninde yukarı doğru bir gölge
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.home_filled,
-                  size: 25,
-                  color: Colors.grey,
-                ),
-              ),
-              TextButton(
-                  onPressed: () {
-                Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => RepositoryProvider(
-        create: (context) => UserRepository(),
-        child: UserPage(),
-      )),
-    );
-                  },
-                  child: const Text(
-                    "Go to Word Ninja",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ))
-            ],
-          ),
-        ),
-      ),
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-      floatingActionButton: _buildKanbanEkleFab(context),
+      bottomNavigationBar: buildBottomNavigationBar(),
+      appBar: buildAppBar(),
+      body: buildBody(),
+      floatingActionButton: buildKanbanEkleFab(context),
     );
   }
 
-  AppBar _buildAppBar() {
+  // Alt gezinme çubuğunu oluşturan fonksiyon
+  Widget buildBottomNavigationBar() {
+    return Container(
+      width: double.infinity,
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 5,
+            blurRadius: 10,
+            offset: const Offset(0, -1), // Y ekseninde yukarı doğru bir gölge
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.home_filled,
+                size: 25,
+                color: Colors.grey,
+              ),
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RepositoryProvider(
+                              create: (context) => UserRepository(),
+                              child: const UserPage(),
+                            )),
+                  );
+                },
+                child: const Text(
+                  "Word Ninja'ya Git",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    decoration: TextDecoration.underline,
+                  ),
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+
+// App bar'ı oluşturan fonksiyon
+  AppBar buildAppBar() {
     return AppBar(
       backgroundColor: const Color(0xff744BFC),
       leadingWidth: 150,
@@ -113,41 +123,43 @@ class HomePageState extends State<HomePage> {
         ),
         IconButton(
           onPressed: () {
-             Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => RepositoryProvider(
-        create: (context) => UserRepository(),
-        child: UserPage(),
-      )),
-    );
-          
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => RepositoryProvider(
+                        create: (context) => UserRepository(),
+                        child: const UserPage(),
+                      )),
+            );
           },
           icon: const Icon(Icons.settings, color: Colors.white),
         ),
-        IconButton( 
+        IconButton(
           icon: const Icon(
             Icons.delete,
             color: Colors.white,
           ),
-          onPressed: _seciliKanbanlariSil,
+          onPressed: seciliKanbanlariSil,
         ),
       ],
     );
   }
 
-  Widget _buildBody() {
+// Ekranın gövdesini oluşturan fonksiyon
+  Widget buildBody() {
     return FutureBuilder(
-      future: _ilkKanbanlariGetir(),
-      builder: _buildReorderableListView,
+      future: ilkKanbanlariGetir(),
+      builder: buildReorderableListView,
     );
   }
-
-  Widget _buildReorderableListView(BuildContext context, AsyncSnapshot<void> snapshot) {
+// ReorderableListView'ı oluşturan fonksiyon
+  Widget buildReorderableListView(BuildContext context, AsyncSnapshot<void> snapshot) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          _buildProjectCard("Refactoring for Word Ninja", "New project for refactoring our app Word ninja"),
-          _buildBacklogSection("Backlog", "4"),
+          buildProjectCard("Refactoring for Word Ninja", "New project for refactoring our app Word ninja"),
+          buildBacklogSection("Backlog", "4"),
+         // Kanbanlar için ReorderableListView
           Container(
             color: Colors.white,
             width: double.infinity,
@@ -169,13 +181,13 @@ class HomePageState extends State<HomePage> {
               children: List.generate(
                 kanbanlar.length,
                 (index) {
-                  return _buildListItem(context, index);
+                  return buildListItem(context, index);
                 },
               ),
             ),
           ),
           const SizedBox(height: 15),
-          _buildBacklogSection("To Do", "8"),
+          buildBacklogSection("To Do", "8"),
           Container(
             color: Colors.white,
             width: double.infinity,
@@ -197,13 +209,13 @@ class HomePageState extends State<HomePage> {
               children: List.generate(
                 kanbanlar.length,
                 (index) {
-                  return _buildListItem(context, index);
+                  return buildListItem(context, index);
                 },
               ),
             ),
           ),
           const SizedBox(height: 15),
-          _buildBacklogSection("In progress", "11"),
+          buildBacklogSection("In progress", "11"),
           Container(
             color: Colors.white,
             width: double.infinity,
@@ -225,13 +237,13 @@ class HomePageState extends State<HomePage> {
               children: List.generate(
                 kanbanlar.length,
                 (index) {
-                  return _buildListItem(context, index);
+                  return buildListItem(context, index);
                 },
               ),
             ),
           ),
           const SizedBox(height: 15),
-          _buildBacklogSection("Done", "3"),
+          buildBacklogSection("Done", "3"),
           Container(
             color: Colors.white,
             width: double.infinity,
@@ -253,7 +265,7 @@ class HomePageState extends State<HomePage> {
               children: List.generate(
                 kanbanlar.length,
                 (index) {
-                  return _buildListItem(context, index);
+                  return buildListItem(context, index);
                 },
               ),
             ),
@@ -263,7 +275,8 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildProjectCard(String title, String description) {
+// Bir proje kartı widget'ını oluşturan fonksiyon
+  Widget buildProjectCard(String title, String description) {
     return Column(
       children: [
         Row(
@@ -301,7 +314,8 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBacklogSection(String title, String count) {
+ // Backlog bölümünü oluşturan fonksiyon
+  Widget buildBacklogSection(String title, String count) {
     return Column(
       children: [
         Row(
@@ -333,32 +347,25 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildListItem(BuildContext context, int index) {
+// List item widget'ını oluşturan fonksiyon
+  Widget buildListItem(BuildContext context, int index) {
     return Padding(
       key: ValueKey(kanbanlar[index].id),
       padding: const EdgeInsets.all(2.0),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CardDetay(),
-            ),
-          );
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => CardDetay()));
         },
         child: Container(
           width: 300,
           height: 170,
-  
           child: Stack(
             children: [
               Card(
-                elevation: 3,
-                shadowColor: Colors.grey.withOpacity(0.5),
-
+                elevation: 10,
+                shadowColor: Colors.grey.withOpacity(0.6),
                 surfaceTintColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 color: Colors.white,
@@ -366,9 +373,8 @@ class HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(left: 15, right: 15, bottom: 3, top: 10),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(
-                      mainAxisAlignment:MainAxisAlignment.end ,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                       
                         const SizedBox(
                           width: 20,
                         ),
@@ -385,7 +391,7 @@ class HomePageState extends State<HomePage> {
                             Icons.edit,
                           ),
                           onPressed: () {
-                            _kanbanGuncelle(context, index);
+                            kanbanGuncelle(context, index);
                           },
                         ),
                         const SizedBox(
@@ -410,24 +416,23 @@ class HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                     Text(
-                          kanbanlar[index].isim,
-                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
-                        ),
+                    Text(
+                      kanbanlar[index].isim,
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
                     const SizedBox(height: 4),
-                      SizedBox(
-                        height: 55,
-                        child: Text(
+                    SizedBox(
+                      height: 50,
+                      child: Text(
                         maxLines: 3,
-                         kanbanlar[index].aciklama,
-                         style: const TextStyle(
+                        kanbanlar[index].aciklama,
+                        style: const TextStyle(
                           color: Color(0xff707070),
                           fontSize: 9,
                           overflow: TextOverflow.ellipsis,
                         ),
-                                            ),
                       ),
-                   
+                    ),
                     const Row(
                       children: [
                         CircleAvatar(
@@ -435,13 +440,20 @@ class HomePageState extends State<HomePage> {
                           radius: 17,
                           backgroundImage: AssetImage("assets/image.png"),
                         ),
+                            Positioned(
+                              left:30,
+                              bottom:21,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 17,
+                                backgroundImage: AssetImage("assets/image2.png"),
+                              ),
+                            ),
                         Spacer(),
                         Icon(Icons.calendar_month, color: Colors.grey, size: 15),
                         SizedBox(width: 8),
-                        
-                     
                         Text(
-                         "Creation Date",
+                          "6 Fab",
                           style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 10),
                         ),
                       ],
@@ -449,15 +461,7 @@ class HomePageState extends State<HomePage> {
                   ]),
                 ),
               ),
-              const Positioned(
-                bottom: 21,
-                left: 46,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 17,
-                  backgroundImage: AssetImage("assets/image2.png"),
-                ),
-              ),
+            
             ],
           ),
         ),
@@ -465,7 +469,9 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildKanbanEkleFab(BuildContext context) {
+  // Kanban eklemek için kullanılan FloatingActionButton'ı oluşturan fonksiyon
+
+  Widget buildKanbanEkleFab(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: const Color(0xff744BFC),
       child: const Icon(
@@ -473,28 +479,29 @@ class HomePageState extends State<HomePage> {
         color: Colors.white,
       ),
       onPressed: () {
-        _kanbanEkle(context);
+        kanbanEkle(context);
       },
     );
   }
-
-  void _kanbanEkle(BuildContext context) async {
+// Kanban eklemek için kullanılan fonksiyon
+  void kanbanEkle(BuildContext context) async {
     List<dynamic>? sonuc = await pencereAc(context);
 
     if (sonuc != null && sonuc.length > 1) {
       String kanbanAdi = sonuc[0];
-      String kanbanAcikla =sonuc[1];
+      String kanbanAcikla = sonuc[1];
       int kategori = sonuc[2];
 
-      Kanban yeniKanban = Kanban(kanbanAdi,kanbanAcikla, DateTime.now(), kategori);
+      Kanban yeniKanban = Kanban(kanbanAdi, kanbanAcikla, DateTime.now(), kategori);
       int kanbanIdsi = await yerelVeriTabani.createKanban(yeniKanban);
       print("Kanban Idsi: $kanbanIdsi");
       kanbanlar = [];
-      setState(() {}); 
+      setState(() {});
     }
   }
 
-  void _kanbanGuncelle(BuildContext context, int index) async {
+ // Kanban güncellemek için kullanılan fonksiyon
+  void kanbanGuncelle(BuildContext context, int index) async {
     Kanban kanban = kanbanlar[index];
 
     List<dynamic>? sonuc = await pencereAc(
@@ -506,7 +513,7 @@ class HomePageState extends State<HomePage> {
 
     if (sonuc != null && sonuc.length > 1) {
       String yeniKanbanAdi = sonuc[0];
-        String yeniacikla =sonuc[1];
+      String yeniacikla = sonuc[1];
       int yeniKategori = sonuc[2];
 
       if (kanban.isim != yeniKanbanAdi || kanban.kategori != yeniKategori || kanban.aciklama != yeniacikla) {
@@ -522,7 +529,8 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  void _kanbanSil(int index) async {
+// Kanban silmek için kullanılan fonksiyon
+  void kanbanSil(int index) async {
     Kanban kanban = kanbanlar[index];
     int silinenSatirSayisi = await yerelVeriTabani.deleteKanban(kanban);
     if (silinenSatirSayisi > 0) {
@@ -531,7 +539,8 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  void _seciliKanbanlariSil() async {
+// Seçilen Kanbanları silmek için kullanılan fonksiyon
+  void seciliKanbanlariSil() async {
     int silinenSatirSayisi = await yerelVeriTabani.deleteKanbanlar(
       secilenKanbanIdleri,
     );
@@ -541,7 +550,8 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _ilkKanbanlariGetir() async {
+// İlk Kanbanları getirmek için kullanılan fonksiyon
+  Future<void> ilkKanbanlariGetir() async {
     if (kanbanlar.isEmpty) {
       kanbanlar = await yerelVeriTabani.readTumKanbanlar(secilenKategori, 0);
       print("İlk Kanbanlar");
@@ -550,5 +560,4 @@ class HomePageState extends State<HomePage> {
       }
     }
   }
-
 }

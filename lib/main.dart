@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanbanboardapp/src/view/home_page.dart';
+import 'package:kanbanboardapp/src/view/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:   HomePage());
+      home:const SplashScreen());
   }
 }
  

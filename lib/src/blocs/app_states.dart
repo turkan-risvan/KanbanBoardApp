@@ -1,34 +1,30 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:kanbanboardapp/src/model/user_model.dart';
- 
 
 @immutable
-abstract class UserState extends Equatable{}
-// data loading state
-  class UserLoadingState extends UserState{
-    @override
-    List<Object?> get props => [];
-  }
+abstract class UserState extends Equatable {}
 
- class UserLoadedState extends UserState{
+// Veri yükleniyor durumu
+class UserLoadingState extends UserState {
+  @override
+  List<Object?> get props => [];
+}
+
+// Veri yüklendi durumu
+class UserLoadedState extends UserState {
   UserLoadedState(this.users);
-final List<UserModel> users;
+  final List<UserModel> users;
 
-    @override
-    List<Object?> get props => [users];
-  }
+  @override
+  List<Object?> get props => [users];
+}
 
-
-   class UserErrorState extends UserState{
+// Veri yüklenirken hata durumu
+class UserErrorState extends UserState {
   UserErrorState(this.error);
-final String error;
+  final String error;
 
-    @override
-    List<Object?> get props => [error];
-  }
-
-// data loaded state
-
-// data error loading state
+  @override
+  List<Object?> get props => [error];
+}
